@@ -5,16 +5,41 @@
  * @throws {Error} If the JSON is invalid.
  */
 
+class JSONParseError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'JSONParseError';
+    }
+}
+
 function parse(tokens) {
     const jsonString = tokens.join('');
     try {
-        const parsedData = JSON.parse(jsonString);
+        const parsedData = JSON.parse(jsonString, (key, value) => {
+            if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) {
+                return new Date(value);
+            }
+            return value;
+        });
         return parsedData;
     } catch (error) {
-        throw new Error('Invalid JSON format');
+        throw new JSONParseError('Invalid JSON format');
     }
+}
+
+function stringify(data) {
+    const jsonString = JSON.stringify(data, (key, value) => {
+        //custom serialization for dates
+        if (value instanceof Date) {
+            return value.toISOString();
+        }
+        return value;
+    });
+    return jsonString;
 }
 
 module.exports = {
     parse,
+    JSONParseError,
+    stringify,
 };
