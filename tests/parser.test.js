@@ -1,4 +1,5 @@
 const { parse, JSONParseError } = require('../src/parser');
+const { stringify } = require('../src/parser');
 
 test('Parsing a JSON object', () => {
     const tokens = ['{', '"name"', ':', '"Faiaz"', ',', '"age"', ':', '25', '}'];
@@ -52,4 +53,19 @@ test('Parsing deeply nested JSON', () => {
     expect(parsedData).toEqual({
         obj1: { obj2: { obj3: {} } }
     });
+});
+
+test('Parsing and stringifying dates', () => {
+    const date = new Date('2023-09-13T12:00:00Z');
+    const jsonString = stringify(date);
+    const parsedDate = parse(`"${jsonString}"`);
+    expect(parsedDate).toEqual(date);
+});
+
+test('Parsing and stringifying regular expressions', () => {
+    const regex = /pattern/g;
+    const jsonObject = stringify(regex);
+    const parsedRegex = parse(jsonObject);
+    expect(parsedRegex.source).toEqual(regex.source);
+    expect(parsedRegex.flags).toEqual(regex.flags);
 });

@@ -19,6 +19,10 @@ function parse(tokens) {
             if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) {
                 return new Date(value);
             }
+            // custom deserialization for regular expressions
+            if (value && typeof value === 'object' && value['__regex__'] === true) {
+                return new RegExp(value.source, value.flags);
+            }
             return value;
         });
         return parsedData;
@@ -32,6 +36,14 @@ function stringify(data) {
         //custom serialization for dates
         if (value instanceof Date) {
             return value.toISOString();
+        }
+        // custom serialization for regular expressions
+        if (value instanceof RegExp) {
+            return {
+                '__regex__': true,
+                'source': value.source,
+                'flags': value.flags,
+            };
         }
         return value;
     });

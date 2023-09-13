@@ -1,5 +1,5 @@
 const { parse } = require('./parser');
-const { tokenizer } = require('./tokenizer');
+const { tokenize } = require('./tokenizer');
 
 /**
  * prase a JSON string and returns the parsed data.
