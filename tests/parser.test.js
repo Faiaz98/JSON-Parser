@@ -1,5 +1,6 @@
 const { parse, JSONParseError } = require('../src/parser');
 const { stringify } = require('../src/parser');
+const { customValidation, JSONValidationError } = require('../src/parser');
 
 test('Parsing a JSON object', () => {
     const tokens = ['{', '"name"', ':', '"Faiaz"', ',', '"age"', ':', '25', '}'];
@@ -69,4 +70,26 @@ test('Parsing and stringifying regular expressions', () => {
     expect(parsedRegex).toBeInstanceOf(RegExp);
     expect(parsedRegex.source).toEqual(regex.source);
     expect(parsedRegex.flags).toEqual(regex.flags);
+});
+
+test('Custom JSON Validation: Valid JSON data', () => {
+    const jsonData = { age: 25 };
+    const customValidation = (parsedData) => {
+        if (parsedData.age >= 18) {
+            return true;
+        } else {
+            throw new JSONValidationError('Age must be 18 or older');
+        }
+    };
+
+    const jsonString = JSON.stringify(jsonData);
+    const tokens = [jsonString];
+
+    try {
+        const parsedData = parse(tokens, customValidation);
+        expect(parsedData).toEqual(jsonData);
+    } catch (error) {
+        expect(error).toBeInstanceOf(JSONValidationError);
+        expect(error.message).toEqual('Age must be 18 or older');
+    }
 });

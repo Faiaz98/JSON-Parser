@@ -12,7 +12,14 @@ class JSONParseError extends Error {
     }
 }
 
-function parse(tokens) {
+class JSONValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'JSONValidationError';
+    }
+}
+
+function parse(tokens, customValidation = null) {
     const jsonString = tokens.join('');
     try {
         const parsedData = JSON.parse(jsonString, (key, value) => {
@@ -28,6 +35,11 @@ function parse(tokens) {
             }
             return value;
         });
+
+        //apply custom validation
+        if (customValidation && !customValidation(parsedData)) {
+            throw new JSONValidationError('Custom validation failed');
+        }
         return parsedData;
     } catch (error) {
         throw new JSONParseError('Invalid JSON format');
@@ -56,5 +68,6 @@ function stringify(data) {
 module.exports = {
     parse,
     JSONParseError,
+    JSONValidationError,
     stringify,
 };
