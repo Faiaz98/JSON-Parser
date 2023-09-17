@@ -21,4 +21,4 @@ This is a JavaScript library that provides tools for parsing, validating, and ma
 You can install this library using npm:
 
 ```bash
-npm install json-parser-library
+npm install jsonpv
