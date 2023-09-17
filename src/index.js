@@ -9,7 +9,7 @@ const { tokenize } = require('./tokenizer');
  */
 
 function parseJson(jsonString) {
-    const token = tokenize(jsonString);
+    const tokens = tokenize(jsonString);
     const parsedData = parse(tokens);
     return parsedData;
 }
