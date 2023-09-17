@@ -57,15 +57,16 @@ test('Parsing deeply nested JSON', () => {
 
 test('Parsing and stringifying dates', () => {
     const date = new Date('2023-09-13T12:00:00Z');
-    const jsonString = stringify(date);
-    const parsedDate = parse(`"${jsonString}"`);
+    const tokens = [JSON.stringify(date)]; //pass the date as a token
+    const parsedDate = parse(tokens);
     expect(parsedDate).toEqual(date);
 });
 
 test('Parsing and stringifying regular expressions', () => {
     const regex = /pattern/g;
-    const jsonObject = stringify(regex);
-    const parsedRegex = parse(jsonObject);
+    const jsonString = stringify(regex);
+    const parsedRegex = parse([jsonString]); // Pass the JSON string as an array
+    expect(parsedRegex).toBeInstanceOf(RegExp);
     expect(parsedRegex.source).toEqual(regex.source);
     expect(parsedRegex.flags).toEqual(regex.flags);
 });

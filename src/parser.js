@@ -16,12 +16,15 @@ function parse(tokens) {
     const jsonString = tokens.join('');
     try {
         const parsedData = JSON.parse(jsonString, (key, value) => {
-            if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) {
+            if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)) {
                 return new Date(value);
             }
             // custom deserialization for regular expressions
-            if (value && typeof value === 'object' && value['__regex__'] === true) {
-                return new RegExp(value.source, value.flags);
+            if (value && typeof value === 'object') {
+                if (value['__regex__']) {
+                    return new RegExp(value.source, value.flags);
+                }
+
             }
             return value;
         });
@@ -40,9 +43,9 @@ function stringify(data) {
         // custom serialization for regular expressions
         if (value instanceof RegExp) {
             return {
-                '__regex__': true,
-                'source': value.source,
-                'flags': value.flags,
+                __regex__: true,
+                source: value.source,
+                flags: value.flags,
             };
         }
         return value;
