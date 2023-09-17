@@ -1,6 +1,8 @@
 const { parse, JSONParseError } = require('../src/parser');
 const { stringify } = require('../src/parser');
 const { customValidation, JSONValidationError } = require('../src/parser');
+const { validateWithSchema } = require('../src/parser');
+const mySchema = require('../schemas/mySchema.json');
 
 test('Parsing a JSON object', () => {
     const tokens = ['{', '"name"', ':', '"Faiaz"', ',', '"age"', ':', '25', '}'];
@@ -92,4 +94,38 @@ test('Custom JSON Validation: Valid JSON data', () => {
         expect(error).toBeInstanceOf(JSONValidationError);
         expect(error.message).toEqual('Age must be 18 or older');
     }
+});
+
+
+test('JSON Schema Validation: Valid JSON Data', () => {
+    const jsonData = {
+        "name": "John",
+        "age": 25
+    };
+
+    // Ensure that the validation does not throw an error
+    const validatedData = validateWithSchema(mySchema, jsonData);
+
+    // Expect that the validated data is the same as the input JSON data
+    expect(validatedData).toEqual(jsonData);
+});
+
+test('JSON Schema Validation: Invalid JSON Data (Age < 18)', () => {
+    const jsonData = {
+        "name": "Alice",
+        "age": 16 // Age is below the minimum allowed (18)
+    };
+
+    // Expect that validating this data throws an error
+    expect(() => validateWithSchema(mySchema, jsonData)).toThrow(Error);
+});
+
+test('JSON Schema Validation: Invalid JSON Data (Missing Required Field)', () => {
+    const jsonData = {
+        "name": "Bob"
+            // Age is missing, which is a required field
+    };
+
+    // Expect that validating this data throws an error
+    expect(() => validateWithSchema(mySchema, jsonData)).toThrow(Error);
 });

@@ -1,9 +1,23 @@
+const Ajv = require('ajv');
+const { error } = require('ajv/dist/vocabularies/applicator/dependencies');
+const ajv = new Ajv();
+
 /**
  * Parses a JSON array of tokens into an object or array.
  * @param {Array} tokens - An array of tokens.
  * @returns {Object|Array} - The parsed JSON data.
  * @throws {Error} If the JSON is invalid.
  */
+function validateWithSchema(jsonSchema, jsonData) {
+    const validate = ajv.compile(jsonSchema);
+
+    if (!validate(jsonData)) {
+        const errorMessages = validate.errors.map(error => error.message);
+        throw new Error(`JSON Schema validation failed: ${errorMessages.join(', ')}`);
+    }
+
+    return jsonData;
+}
 
 class JSONParseError extends Error {
     constructor(message) {
@@ -70,4 +84,5 @@ module.exports = {
     JSONParseError,
     JSONValidationError,
     stringify,
+    validateWithSchema,
 };
