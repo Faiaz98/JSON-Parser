@@ -36,7 +36,7 @@ class JSONValidationError extends Error {
 function parse(tokens, customValidation = null) {
     const jsonString = tokens.join('');
     try {
-        const parsedData = JSON.parse(jsonString, (key, value) => {
+        let parsedData = JSON.parse(jsonString, (key, value) => {
             if (typeof value === 'string' && value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/)) {
                 return new Date(value);
             }
@@ -54,6 +54,8 @@ function parse(tokens, customValidation = null) {
         if (customValidation && !customValidation(parsedData)) {
             throw new JSONValidationError('Custom validation failed');
         }
+
+
         return parsedData;
     } catch (error) {
         throw new JSONParseError('Invalid JSON format');
@@ -78,6 +80,24 @@ function stringify(data) {
     });
     return jsonString;
 }
+
+/*function parseJson(jsonString, query) {
+    let jsonData = JSON.parse(jsonString);
+
+    if (query) {
+        if (query.filter && typeof query.filter === 'function') {
+            jsonData = jsonData.filter(query.filter);
+        }
+
+        if (query.limit) {
+            jsonData = jsonData.slice(0, query.limit);
+        }
+    }
+
+    return jsonData;
+}*/
+
+
 
 module.exports = {
     parse,

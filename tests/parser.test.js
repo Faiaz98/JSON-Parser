@@ -3,6 +3,7 @@ const { stringify } = require('../src/parser');
 const { customValidation, JSONValidationError } = require('../src/parser');
 const { validateWithSchema } = require('../src/parser');
 const mySchema = require('../schemas/mySchema.json');
+const { parseJson } = require('../src/index');
 
 test('Parsing a JSON object', () => {
     const tokens = ['{', '"name"', ':', '"Faiaz"', ',', '"age"', ':', '25', '}'];
