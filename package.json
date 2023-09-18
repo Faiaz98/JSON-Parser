@@ -1,6 +1,6 @@
 {
   "name": "jsonpv",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A JSON parsing and validation library.",
   "main": "src/index.js",
   "scripts": {
