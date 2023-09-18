@@ -22,3 +22,28 @@ You can install this library using npm:
 
 ```bash
 npm install jsonpv
+
+## Usage
+
+Here's how to get started with JSON Parser and Validator:
+
+```javascript
+const { parse, stringify, validateWithSchema, JSONParseError, JSONValidationError } = require('json-parser-validator');
+
+// Parse JSON data
+const jsonData = parse(jsonString);
+
+// Serialize data
+const jsonString = stringify(jsonData);
+
+// Validate JSON data with a schema
+try {
+  validateWithSchema(schema, jsonData);
+} catch (error) {
+  if (error instanceof JSONValidationError) {
+    console.error('Validation Error:', error.message);
+  } else {
+    console.error('Unexpected Error:', error.message);
+  }
+}
+```
